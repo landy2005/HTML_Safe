@@ -127,6 +127,13 @@ class HTML_Safe
      */
     protected $allowTags = array();
 
+    /**
+     * Revert this strings back, before return parsed
+     *
+     * @var array
+     */
+    protected $replaceResult = array('from' => array('&lt;','&amp;amp;','&amp;lt;','&amp;gt;'),
+                                     'to'   => array('<','&amp;','&lt;','&gt;'));
 
     /**
      * List of single tags ("<tag />")
@@ -667,13 +674,14 @@ class HTML_Safe
         $this->clear();
 
         // Restore &entity\n;
-        $result = str_replace(array('&lt;','&amp;amp;','&amp;lt;','&amp;gt;'), array('<','&amp;','&lt;','&gt;'), $result);
+        $result = str_replace($this->replaceResult['from'], $this->replaceResult['to'], $result);
 
         return $result;
     }
 
     /**
-     * UTF-7 decoding fuction
+     * UTF-7 decoding fuction,
+     *  this function not correct utf7 decoder, but worked for decode html tags
      *
      * @param string $str HTML document for recode ASCII part of UTF-7 back to ASCII
      * @return string Decoded document
@@ -681,7 +689,7 @@ class HTML_Safe
      */
     function repackUTF7($str)
     {
-       return preg_replace_callback('!\+([0-9a-zA-Z/]+)\-!', array($this, 'repackUTF7Callback'), $str);
+       return preg_replace_callback('!\+([0-9a-zA-Z/]{3,})\-!', array($this, 'repackUTF7Callback'), $str);
     }
 
     /**
@@ -694,9 +702,9 @@ class HTML_Safe
     function repackUTF7Callback($str)
     {
        $decode = base64_decode($str[1].'==');
-       if (preg_match('/^\x00([^\x00]+)/', $decode, $matches))
+       if ($decode && preg_match('/^\x00([^\x00]+)/', $decode))
        {
-          return $matches[1];
+          return preg_replace('/\x00(.)/', '$1', $decode);
        } else {
           return $str[0];
        }

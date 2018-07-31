@@ -49,7 +49,33 @@ final class HTML_SafeTest extends TestCase
           array('&amp;',                '&amp;'),
           // UTF-7
           array('+ADw-',                '<'),
-          //array('Star Wars',                     0),
+          array('+ADwAPAA8-',           '<<<'),
+          //array('+AGAAfgAhAEAAIwAkACUAXgAmACo()+AF8AKw--+AD0AewB9AHwAWwBdAFw:+ACIAOw\'+ADwAPg?,./', '`~!@#$%^&*()_+-={}|[]\:";\'<>?,./'),
+        );
+    }
+
+    /**
+     * @dataProvider providerPreventXSS
+     */
+    public function testPreventXSS($input, $expected)
+    {
+        $safe = new HTML_Safe;
+
+        $this->assertSame($expected, $safe->parse($input));
+    }
+
+    public function providerPreventXSS()
+    {
+        return array(
+          array('<span style="width: expression(alert(\'Ping!\'));"></span>', '<span></span>'),
+          array('<script>alert(\'xss\')</script>',                              ''),
+          array('+ADw-script+AD4-alert(+ACc-xss+ACc-)+ADw-+AC8-script+AD4-',    ''),
+          //
+          array('+ADw-p+AD4-Welcome to UTF-7!+ADw-+AC8-p+AD4-
++ADw-script+AD4-alert(+ACc-utf-7!+ACc-)+ADw-+AC8-script+AD4-',                    "<p>Welcome to UTF-7!</p>\n"),
+          //array('>',                    '>'),
+          //array('&',                    '&'),
+
         );
     }
 }
