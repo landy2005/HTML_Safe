@@ -7,8 +7,8 @@ http://pixel-apes.com/safehtml/
 This parser strips down all potentially dangerous content within HTML:
   * opening tag without its closing tag
   * closing tag without its opening tag
-  * any of these tags: "base", "basefont", "head", "html", "body", "applet", "object", 
-    "iframe", "frame", "frameset", "script", "layer", "ilayer", "embed", "bgsound", 
+  * any of these tags: "base", "basefont", "head", "html", "body", "applet", "object",
+    "iframe", "frame", "frameset", "script", "layer", "ilayer", "embed", "bgsound",
     "link", "meta", "style", "title", "blink", "xml" etc.
   * any of these attributes: on*, data*, dynsrc
   * javascript:/vbscript:/about: etc. protocols
@@ -18,7 +18,7 @@ It also tries to convert code to XHTML valid, but htmltidy is far better solutio
 
 If you found any bugs in this parser, please inform me -- ICQ:551593 or mailto:thingol@mail.ru
 
-Please, subscribe to http://pixel-apes.com/safehtml/feed/rss feed in order to receive notices 
+Please, subscribe to http://pixel-apes.com/safehtml/feed/rss feed in order to receive notices
 when SAFEHTML will be updated.
 
 -- Roman Ivanov.
@@ -30,6 +30,8 @@ when SAFEHTML will be updated.
 --------
 Version history:
 --------
+1.4.0.
+ * Added compatability with php 7.x, temporary switched to Diggin_HTMLSax (a fork of PEAR'S XML_HTMLSax3).
 1.3.5.
  * Two serious security flaws fixed: UTF-7 XSS and CSS comments handling.
 1.3.2.
@@ -54,11 +56,11 @@ Version history:
  * New "dangerous" protocols: hcp, ms-help, help, disk, vnd.ms.radio, opera, res, resource, chrome, mocha, livescript.
  * <XML> tag was moved from "tags for deletion" to "tags for deletion with content".
  * New "dangerous" CSS instruction "include-source" (NN4 specific).
- * New array, Attributes, contains list of attributes for removal. If you need to remove "id" or "name" attribute, 
+ * New array, Attributes, contains list of attributes for removal. If you need to remove "id" or "name" attribute,
  just add it to this array.
  * Now it is possible to choose between white-list and black-list filtering of protocols. Defaults are "white-list".
  This list is: "http", "https", "ftp", "telnet", "news", "nntp", "gopher", "mailto", "file".
- * For speed purposes, we now filter protocols only from these attributes: src, href, action, lowsrc, dynsrc, 
+ * For speed purposes, we now filter protocols only from these attributes: src, href, action, lowsrc, dynsrc,
  background, codebase.
  * Opera6 XSS bug ([\xC0][\xBC]script>alert(1)[\xC0][\xBC]/script> [UTF-8] workarounded.
 1.0.4.

@@ -23,8 +23,8 @@
     },
     "type": "library",
     "require": {
-        "pear/pear_exception": "*",
-        "pear/xml_htmlsax3": "*"
+        "php": ">=5.5",
+        "diggin/diggin-htmlsax": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

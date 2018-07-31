@@ -19,7 +19,8 @@
 /**
  * This package requires HTMLSax3 package
  */
-require_once 'XML/HTMLSax3.php';
+//require_once 'XML/HTMLSax3.php';
+use Diggin\HTMLSax\HTMLSax;
 
 /**
  * HTML_Safe Parser
@@ -644,7 +645,8 @@ class HTML_Safe
         $doc = $this->repackUTF7($doc);
 
         // Instantiate the parser
-        $parser = new XML_HTMLSax3;
+        //$parser = new XML_HTMLSax3;
+        $parser = new HTMLSax;
 
         // Set up the parser
         $parser->set_object($this);
