@@ -6,26 +6,50 @@ use PHPUnit\Framework\TestCase;
 
 final class HTML_SafeTest extends TestCase
 {
-    public function testAllowTags()
+    /**
+     * @dataProvider providerAllowTags
+     */
+    public function testAllowTags($input, $expected)
     {
-        $input    = '<html><body><p>my text</p></body></html>'; 
-        $expected = '<body><p>my text</p></body>';
-
         $safe = new HTML_Safe;
         $safe->setAllowTags(array('body'));
-        $this->assertSame($expected, $safe->parse($input)); 
+
+        $this->assertSame($expected, $safe->parse($input));
+    }
+    public function providerAllowTags()
+    {
+        return array(
+            array('<html><body><p>my text</p></body></html>', '<body><p>my text</p></body>'),
+        );
     }
 
-    public function testSpecialChars()
+    /**
+     * @dataProvider providerSpecialChars
+     */
+    public function testSpecialChars($input, $expected)
     {
-        $inputOne    = 'a+b-c';
-        $expectedOne = 'a+b-c';
-
-        $inputTwo    = '+49-52 <br />';
-        $expectedTwo = '+49-52 <br />';
-
         $safe = new HTML_Safe;
-        $this->assertSame($expectedOne, $safe->parse($inputOne));
-        $this->assertSame($expectedTwo, $safe->parse($inputTwo));
+
+        $this->assertSame($expected, $safe->parse($input));
+    }
+
+    public function providerSpecialChars()
+    {
+        return array(
+          array('a+b-c',                'a+b-c'),
+          array('+49-52 <br />',        '+49-52 <br />'),
+
+          array('<',                    '<'),
+          array('>',                    '>'),
+          array('&',                    '&'),
+
+          // Entities
+          array('&lt;',                 '&lt;'),
+          array('&gt;',                 '&gt;'),
+          array('&amp;',                '&amp;'),
+          // UTF-7
+          array('+ADw-',                '<'),
+          //array('Star Wars',                     0),
+        );
     }
 }

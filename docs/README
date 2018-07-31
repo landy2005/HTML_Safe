@@ -32,6 +32,8 @@ Version history:
 --------
 1.4.0.
  * Added compatability with php 7.x, temporary switched to Diggin_HTMLSax (a fork of PEAR'S XML_HTMLSax3).
+ * Fixed replace incorrectly detected UTF-7 texts.
+ * Improved phpunits.
 1.3.5.
  * Two serious security flaws fixed: UTF-7 XSS and CSS comments handling.
 1.3.2.
