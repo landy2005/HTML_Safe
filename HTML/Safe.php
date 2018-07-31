@@ -638,11 +638,16 @@ class HTML_Safe
     {
         $result = '';
 
-        // Save all '<' symbols
-        $doc = preg_replace("/<(?=[^a-zA-Z\/\!\?\%])/", '&lt;', $doc);
+        // Save &entity\n;
+        $doc = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $doc);
+        //$doc = preg_replace('/(&#*\w+)[\x00-\x20]+;/u', '$1;', $doc);
+        //$doc = preg_replace('/(&#x*[0-9A-F]+);*/iu', '$1;', $doc);
 
         // UTF7 pack
         $doc = $this->repackUTF7($doc);
+
+        // Save all '<' symbols
+        $doc = preg_replace("/<(?=[^a-zA-Z\/\!\?\%]|$)/", '&lt;', $doc);
 
         // Instantiate the parser
         //$parser = new XML_HTMLSax3;
@@ -660,6 +665,9 @@ class HTML_Safe
         $result = $this->getXHTML();
 
         $this->clear();
+
+        // Restore &entity\n;
+        $result = str_replace(array('&lt;','&amp;amp;','&amp;lt;','&amp;gt;'), array('<','&amp;','&lt;','&gt;'), $result);
 
         return $result;
     }
@@ -685,20 +693,13 @@ class HTML_Safe
      */
     function repackUTF7Callback($str)
     {
-       $str = base64_decode($str[1]);
-       $str = preg_replace_callback('/^((?:\x00.)*)((?:[^\x00].)+)/', array($this, 'repackUTF7Back'), $str);
-       return preg_replace('/\x00(.)/', '$1', $str);
+       $decode = base64_decode($str[1].'==');
+       if (preg_match('/^\x00([^\x00]+)/', $decode, $matches))
+       {
+          return $matches[1];
+       } else {
+          return $str[0];
+       }
     }
 
-    /**
-     * Additional UTF-7 encoding fuction
-     *
-     * @param string $str String for recode ASCII part of UTF-7 back to ASCII
-     * @return string Recoded string
-     * @access private
-     */
-    function repackUTF7Back($str)
-    {
-       return $str[1].'+'.rtrim(base64_encode($str[2]), '=').'-';
-    }
 }
