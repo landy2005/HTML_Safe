@@ -1,4 +1,4 @@
-.komodoproject
+*.komodoproject
 # composer related
 composer.lock
 composer.phar
